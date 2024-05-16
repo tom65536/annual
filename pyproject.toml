@@ -1,0 +1,47 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "annual"
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed"
+]
+dynamic = ["version", "description"]
+dependencies = [
+	"python-dateutil~=2.9"
+]
+requires-python = ">=3.11"
+
+[[project.authors]]
+name = "tom65536"
+email = "peregrinus@planet.ms"
+
+[project.urls]
+Home = "https://github.com/tom65536/annual"
+Source = "https://github.com/tom65536/annual"
+
+[tool.mypy]
+warn_unused_configs = true
+packages = "annual"
+
+[tool.bandit]
+tests = ["B101", "B102", "B110", "B112"]
+
+[tool.vulture]
+paths = ["src/annual", "tests"]
+
+[tool.black]
+skip-string-normalization = true
+
+[tool.pytesti.ini_options]
+addopts = "--cov=annual --cov-report=term"

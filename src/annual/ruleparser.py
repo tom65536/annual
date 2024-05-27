@@ -1,28 +1,35 @@
 """Parse Rule Expressions."""
 
+from __future__ import annotations
+
+from typing import Final
+
 from lark import Lark
 
-rule_grammar = r"""
+__all__ = ['rule_parser']
+
+
+rule_grammar: Final = r"""
     ?rule: recurrence [ _IF condition _ELSE rule ]
 
     recurrence: offset_rule
-              | weekday_rule
-              | year_offset_rule
-              | "(" rule ")"
-              | literal
-              | NEVER
-              | NAME
+        | weekday_rule
+        | year_offset_rule
+        | "(" rule ")"
+        | literal
+        | NEVER
+        | NAME
 
     year_offset_rule: offset _YEAR recurrence
 
     offset_rule: NUMBER _DAYS preposition recurrence
 
     weekday_rule: ordinal weekday _weekday_hook
-                | weekday recurrence_hook
-                | LAST weekday month_hook
+        | weekday recurrence_hook
+        | LAST weekday month_hook
 
     _weekday_hook: month_hook
-                 | recurrence_hook
+        | recurrence_hook
 
     month_hook: _OF month
 
@@ -35,25 +42,25 @@ rule_grammar = r"""
     literal: month NUMBER
 
     ?weekday: MONDAY
-           | TUESDAY
-           | WEDNESDAY
-           | THURSDAY
-           | FRIDAY
-           | SATURDAY
-           | SUNDAY
+        | TUESDAY
+        | WEDNESDAY
+        | THURSDAY
+        | FRIDAY
+        | SATURDAY
+        | SUNDAY
 
     ?month: JANUARY
-         | FEBRUARY
-         | MARCH
-         | APRIL
-         | MAY
-         | JUNE
-         | JULY
-         | AUGUST
-         | SEPTEMBER
-         | OCTOBER
-         | NOVEMBER
-         | DECEMBER
+        | FEBRUARY
+        | MARCH
+        | APRIL
+        | MAY
+        | JUNE
+        | JULY
+        | AUGUST
+        | SEPTEMBER
+        | OCTOBER
+        | NOVEMBER
+        | DECEMBER
 
     condition: or_condition
 
@@ -61,8 +68,7 @@ rule_grammar = r"""
 
     ?and_condition: _simple_condition ["and"i and_condition]
 
-    _simple_condition: recurrence_condition
-                     | year_condition
+    _simple_condition: recurrence_condition | year_condition
 
     ?recurrence_condition: recur_ref _predicate
 
@@ -71,14 +77,14 @@ rule_grammar = r"""
     ?year_condition: _YEAR year_predicate
 
     ?year_predicate: _IS [NOT] division
-                   | preposition NUMBER
+        | preposition NUMBER
 
     ?division: LEAP
-             | NUMBER _MOD NUMBER
+        | NUMBER _MOD NUMBER
 
     _predicate: EXISTS
-              | [NOT] _IN month
-              | _IS [NOT] (weekday | NEVER)
+        | [NOT] _IN month
+        | _IS [NOT] (weekday | NEVER)
 
     ordinal: FIRST | SECOND | THIRD | FOURTH | SHORT_ORD
 
@@ -133,22 +139,8 @@ rule_grammar = r"""
     %ignore /[ \t\n\r]+/
     """
 
-rule_parser = Lark(
+rule_parser: Final = Lark(
     rule_grammar,
     start='rule',
     parser='lalr',
-    # ambiguity='explicit',
 )
-
-if __name__ == '__main__':
-    from pprint import pprint
-    tests = [
-            'second sun of may',
-            '50 days after easter',
-            'may 21',
-            'fourth sunday of june if date exists else first sunday of jul',
-            '100 days after previous year dec 25',
-    ]
-    for test in tests:
-        print(test)
-        pprint(rule_parser.parse(test))

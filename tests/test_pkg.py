@@ -1,4 +1,7 @@
+"""Dummy Test File."""
+
+from __future__ import annotations
 
 
 def test_me() -> None:
-    pass
+    """A dummy test case."""

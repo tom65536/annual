@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+import datetime
+import warnings
 from typing import Final
 
-from lark import Lark
+from lark import Lark, Token, Transformer, v_args
+
+from .model import Month, WeekDay
 
 __all__ = ['rule_parser']
 
@@ -14,34 +18,28 @@ rule_grammar: Final = r"""
 
     recurrence: offset_rule
         | weekday_rule
-        | year_offset_rule
         | "(" rule ")"
         | literal
         | NEVER
         | NAME
 
-    year_offset_rule: offset _YEAR recurrence
+    offset_rule: NUMBER unit preposition recurrence
 
-    offset_rule: NUMBER _DAYS preposition recurrence
+    ?weekday_rule: ordinal weekday month_hook -> owm_rule
+        | wd_rule
+        | LAST weekday month_hook -> lwd_rule
 
-    weekday_rule: ordinal weekday _weekday_hook
-        | weekday recurrence_hook
-        | LAST weekday month_hook
+    wd_rule: [ordinal] weekday [NOT] preposition recurrence
 
-    _weekday_hook: month_hook
-        | recurrence_hook
-
-    month_hook: _OF month
-
-    recurrence_hook: [NOT] preposition recurrence
+    ?month_hook: _OF month
 
     ?preposition: BEFORE | AFTER
 
-    ?offset: NEXT | PREVIOUS
+    ?unit: DAYS | WEEKS
 
     literal: month NUMBER
 
-    ?weekday: MONDAY
+    weekday: MONDAY
         | TUESDAY
         | WEDNESDAY
         | THURSDAY
@@ -49,7 +47,7 @@ rule_grammar: Final = r"""
         | SATURDAY
         | SUNDAY
 
-    ?month: JANUARY
+    month: JANUARY
         | FEBRUARY
         | MARCH
         | APRIL
@@ -72,7 +70,7 @@ rule_grammar: Final = r"""
 
     ?recurrence_condition: recur_ref _predicate
 
-    ?recur_ref: DATE | recurrence
+    ?recur_ref: recurrence
 
     ?year_condition: _YEAR year_predicate
 
@@ -86,15 +84,15 @@ rule_grammar: Final = r"""
         | [NOT] _IN month
         | _IS [NOT] (weekday | NEVER)
 
-    ordinal: FIRST | SECOND | THIRD | FOURTH | SHORT_ORD
+    ?ordinal: FIRST | SECOND | THIRD | FOURTH | TH
 
-    MONDAY.9: /mo(n(day)?)?/i
-    TUESDAY.9: /tu(e(sday)?)?/i
-    WEDNESDAY.9: /we(d(nesday)?)?/i
-    THURSDAY.9: /th(u(rsday))?/i
-    FRIDAY.9: /fr(i(day)?)?/i
-    SATURDAY.9: /sa(t(urday)?)?/i
-    SUNDAY.9: /su(n(day)?)?/i
+    MONDAY.7: /mo(n(day)?)?/i
+    TUESDAY.7: /tu(e(sday)?)?/i
+    WEDNESDAY.7: /we(d(nesday)?)?/i
+    THURSDAY.7: /th(u(rsday))?/i
+    FRIDAY.7: /fr(i(day)?)?/i
+    SATURDAY.7: /sa(t(urday)?)?/i
+    SUNDAY.7: /su(n(day)?)?/i
 
     JANUARY.9: /jan(uary)?/i
     FEBRUARY.9: /feb(ruary)?/i
@@ -113,11 +111,9 @@ rule_grammar: Final = r"""
     SECOND.9: "second"i
     THIRD.9: "third"i
     FOURTH.9: "fourth"i
-    SHORT_ORD.8: /[0-9]*(1st|2nd|3rd|[4-9]th|0th)/i
     LAST.9: "last"i
-    DATE.9: "date"i
     EXISTS.9: "exists"i
-    _OF.9: "of"i
+    _OF.9: /of/i
     _IF.9: "if"i
     _ELSE.9: "else"i
     NEVER.9: "never"i
@@ -125,22 +121,210 @@ rule_grammar: Final = r"""
     _IN.9: "in"i
     LEAP.9: "leap"i
     _MOD.9: "mod"i
-    NEXT.9: "next"i
-    PREVIOUS.9: /prev(ious)?/i
     BEFORE.9: "before"i
     AFTER.9: "after"i
     _YEAR.9: "year"i
-    _DAYS.9: /days?/i
+    DAYS.9: /days?/i
+    WEEKS.9: /weeks?/i
     NOT.9: "not"i
 
+    TH.9: /[2-9]?(1st|2nd|3rd|([4-90]th))|1[0-9]th/i
     NAME.0: /[a-zA-Z]([-_.]?[a-zA-Z0-9])*/
     NUMBER.0: /[0-9]+/
 
     %ignore /[ \t\n\r]+/
     """
 
-rule_parser: Final = Lark(
-    rule_grammar,
-    start='rule',
-    parser='lalr',
-)
+
+@v_args(inline=True)
+class RuleEvaluator(Transformer):
+    """Evaluate recurrence rules for a given year.
+
+    Properties:
+    -----------
+    - funcs
+        a dictionary of precomputed dates
+    - year
+        the year for which new dates are computed
+    """
+
+    def __init__(
+        self,
+        funcs: dict[str, datetime.date | None],
+        year: int,
+    ) -> None:
+        self.funcs: dict[str, datetime.date | None] = funcs
+        self.year: int = year
+
+    def rule(
+        self,
+        t_value: datetime.date | None,
+        condition: bool | None,
+        f_value: datetime.date | None,
+    ) -> datetime.date | None:
+        """Evaluate an optional conditional expression."""
+        if condition is None or condition:
+            return t_value
+        return f_value
+
+    def recurrence(self, rd: datetime.date | None) -> datetime.date | None:
+        return rd
+
+    def literal(self, month: Month, day: int) -> datetime.date | None:
+        """Convert literal to date."""
+        try:
+            return datetime.date(self.year, month.value, day)
+        except ValueError:
+            lit_str = f'{self.year}/{month}/{day}'
+            warnings.warn(
+                'Date literal cannot be converted: ' + lit_str,
+                stacklevel=2,
+            )
+            return None
+
+    def weekday(self, token) -> WeekDay:
+        """Parse a weekday."""
+        return WeekDay[token.type]
+
+    def month(self, token: Token) -> Month:
+        """Parse a weekday."""
+        return Month[token.type]
+
+    def NAME(self, token: Token) -> datetime.date | None:  # noqa: N802
+        """Lookup name."""
+        name = token.value
+        if name not in self.funcs:
+            warnings.warn(
+                f'Unknown date function {name} referenced.',
+                stacklevel=2,
+            )
+            return None
+        return self.funcs[name]
+
+    def NEVER(self, token: Token) -> None:  # noqa: N802
+        """Translate ``NEVER`` to ``None``."""
+
+    def NUMBER(self, token: Token) -> int:  # noqa: N802
+        """Interpret nimber."""
+        return int(token.value)
+
+    def offset_rule(
+        self,
+        number: int,
+        unit: int,
+        preposition: int,
+        recurrence: datetime.date | None,
+    ) -> datetime.date | None:
+        """Translate offset rules."""
+        if recurrence is None:
+            return None
+        num_days = number * unit * preposition
+        return recurrence + datetime.timedelta(days=num_days)
+
+    def owm_rule(
+        self,
+        ordinal: int,
+        week_day: WeekDay,
+        hook: Month,
+    ) -> datetime.date | None:
+        """Translate weekday-of-month rule."""
+        first = datetime.date(self.year, hook.value, 1)
+        offs = (week_day.value - first.weekday() + 7) % 7
+        offs += (ordinal - 1) * 7
+        result = first + datetime.timedelta(days=offs)
+        if result.year == self.year and result.month == hook.value:
+            return result
+        return None
+
+    def wd_rule(
+        self,
+        ordinal: int | None,
+        week_day: WeekDay,
+        neg: Token | None,
+        preposition: int,
+        recurrence: datetime.date,
+    ) -> datetime.date | None:
+        """Translate weekday-relative-to rule.
+
+            m d m d f s
+        m   0-1-2
+        d
+        m
+        d
+        f
+        s
+        s
+        """
+        if recurrence is None:
+            return None
+        weeks = ordinal - 1 if ordinal is not None else 0
+        if neg:
+            delta = (week_day.value - recurrence.weekday() + 7) % 7
+            ofs = preposition * (delta + 7 * weeks)
+            return recurrence + datetime.timedelta(days=ofs)
+        else:
+            delta = (week_day.value - recurrence.weekday() + 6) % 7 + 1
+            ofs = preposition * (delta + 7 * weeks)
+            return recurrence + datetime.timedelta(days=ofs)
+
+    def BEFORE(self, token: Token) -> int:  # noqa: N802
+        """Translate ``BEFORE`` to -1."""
+        return -1
+
+    def AFTER(self, token: Token) -> int:  # noqa: N802
+        """Translate ``AFTER`` to +1."""
+        return 1
+
+    def DAYS(self, token: Token) -> int:  # noqa: N802
+        """Translate ``DAYS`` to +1."""
+        return 1
+
+    def WEEKS(self, token: Token) -> int:  # noqa: N802
+        """Translate ``WEEKS`` to 7."""
+        return 7
+
+    def FIRST(self, token: Token) -> int:  # noqa: N802
+        """Translate ordinal to int."""
+        return 1
+
+    def SECOND(self, token: Token) -> int:  # noqa: N802
+        """Translate ordinal to int."""
+        return 2
+
+    def THIRD(self, token: Token) -> int:  # noqa: N802
+        """Translate ordinal to int."""
+        return 3
+
+    def FOURTH(self, token: Token) -> int:  # noqa: N802
+        """Translate ordinal to int."""
+        return 4
+
+    def TH(self, token: Token) -> int:  # noqa: N802
+        """Translate ordinal to int."""
+        result: int = 0
+        for dig in token.value:
+            if dig >= '0' and dig <= '9':
+                result *= 10
+                result += ord(dig) - ord('0')
+        return result
+
+
+def rule_parser(
+    funcs: dict[str, datetime.date | None],
+    year: int,
+) -> Lark:
+    """Generate rule parser.
+
+    Arguments:
+    ----------
+    - funcs
+        a dictionary of precomputed dates
+    - year
+        the year for which new dates are computed
+    """
+    return Lark(
+        rule_grammar,
+        start='rule',
+        parser='lalr',
+        transformer=RuleEvaluator(funcs, year),
+    )

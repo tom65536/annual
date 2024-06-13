@@ -43,6 +43,7 @@ paths = ["src/annual", "tests"]
 
 [tool.black]
 skip-string-normalization = true
+max-line-length=79
 
 [tool.pytesti.ini_options]
 addopts = "--cov=annual --cov-report=term"

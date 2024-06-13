@@ -244,28 +244,29 @@ class RuleEvaluator(Transformer):
         preposition: int,
         recurrence: datetime.date,
     ) -> datetime.date | None:
-        """Translate weekday-relative-to rule.
-
-            m d m d f s
-        m   0-1-2
-        d
-        m
-        d
-        f
-        s
-        s
-        """
+        """Translate weekday-relative-to rule."""
         if recurrence is None:
             return None
         weeks = ordinal - 1 if ordinal is not None else 0
-        if neg:
-            delta = (week_day.value - recurrence.weekday() + 7) % 7
-            ofs = preposition * (delta + 7 * weeks)
-            return recurrence + datetime.timedelta(days=ofs)
+        if preposition > 0:
+            if neg:
+                # NOT AFTER
+                delta = (week_day.value - recurrence.weekday() + 6) % 7 - 6
+            else:
+                # AFTER
+                delta = (week_day.value - recurrence.weekday() + 6) % 7 + 1
         else:
-            delta = (week_day.value - recurrence.weekday() + 6) % 7 + 1
-            ofs = preposition * (delta + 7 * weeks)
-            return recurrence + datetime.timedelta(days=ofs)
+            if neg:
+                # NOT BEFORE
+                delta = (week_day.value - recurrence.weekday()) % 7
+            else:
+                # BEFORE
+                delta = (week_day.value - recurrence.weekday()) % 7 - 7
+        if neg:
+            delta -= preposition * 7 * weeks
+        else:
+            delta += preposition * 7 * weeks
+        return recurrence + datetime.timedelta(days=delta)
 
     def BEFORE(self, token: Token) -> int:  # noqa: N802
         """Translate ``BEFORE`` to -1."""

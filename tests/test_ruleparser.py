@@ -32,6 +32,9 @@ from annual.ruleparser import rule_parser
         (2024, 'last sun of Sep', dt.date(2024, 9, 29)),
         (2024, 'last sun of Dec', dt.date(2024, 12, 29)),
         (2023, 'jun 1 if false else jul 5', dt.date(2023, 7, 5)),
+        (2023, 'jun 1 if false else never', None),
+        (2023, 'jun 1 if true and false else jul 5', dt.date(2023, 7, 5)),
+        (2023, 'jun 1 if true or false else jul 5', dt.date(2023, 6, 1)),
         (2023, 'jun 1 if true else jul 5', dt.date(2023, 6, 1)),
         (2023, 'jun 1 if feb 29 exists else jul 5', dt.date(2023, 7, 5)),
         (2024, 'jun 1 if feb 29 exists else jul 5', dt.date(2024, 6, 1)),
@@ -44,6 +47,26 @@ from annual.ruleparser import rule_parser
         (2024, 'jun 1 if jul 2 in sep else aug 3', dt.date(2024, 8, 3)),
         (2024, 'jun 1 if jul 2 not in jul else aug 3', dt.date(2024, 8, 3)),
         (2024, 'jun 1 if jul 2 not in sep else aug 3', dt.date(2024, 6, 1)),
+        (
+            2024,
+            'jan 1 if jan 1 is not sunday else jan 2',
+            dt.date(2024, 1, 1),
+        ),
+        (
+            2024,
+            'jan 2 if jan 1 is sunday else jan 1',
+            dt.date(2024, 1, 1),
+        ),
+        (
+            2023,
+            'oct 1 if oct 1 is not sunday else oct 2',
+            dt.date(2023, 10, 2),
+        ),
+        (
+            2023,
+            'oct 2 if oct 1 is sunday else oct 1',
+            dt.date(2023, 10, 2),
+        ),
     ],
 )
 def test_parser(year: int, rule: str, expected: dt.date | None) -> None:

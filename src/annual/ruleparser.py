@@ -308,6 +308,20 @@ class RuleEvaluator(Transformer):
         )
         return self.wd_rule(1, week_day, False, -1, rel)
 
+    def wd_condition(
+        self,
+        recur_ref: dt.date | None,
+        not_tok: Token | None,
+        week_day: WeekDay | None,
+    ) -> bool:
+        """Evaluate weekday condition."""
+        if week_day is None:
+            # recur_ref IS [NOT] NEVER
+            return (recur_ref is None) == (not_tok is None)
+        if recur_ref is None:
+            return False
+        return (recur_ref.weekday() == week_day.value) == (not_tok is None)
+
     def month_condition(
         self,
         recur_ref: datetime.date | None,

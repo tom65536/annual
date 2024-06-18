@@ -14,7 +14,7 @@ __all__ = ['rule_parser']
 
 
 rule_grammar: Final = r"""
-    ?rule: recurrence [ _IF condition _ELSE rule ]
+    rule: recurrence [ _IF condition _ELSE rule ]
 
     recurrence: offset_rule
         | weekday_rule
@@ -25,11 +25,13 @@ rule_grammar: Final = r"""
 
     offset_rule: NUMBER unit preposition recurrence
 
-    ?weekday_rule: ordinal weekday month_hook -> owm_rule
-        | wd_rule
-        | LAST weekday month_hook -> lwd_rule
+    weekday_rule: owm_rule | wd_rule | lwd_rule
 
     wd_rule: [ordinal] weekday [NOT] preposition recurrence
+
+    owm_rule: ordinal weekday month_hook
+
+    lwd_rule: _LAST weekday month_hook
 
     ?month_hook: _OF month
 
@@ -62,13 +64,18 @@ rule_grammar: Final = r"""
 
     condition: or_condition
 
-    ?or_condition: and_condition ["or"i or_condition]
+    or_condition: and_condition ["or"i or_condition]
 
-    ?and_condition: _simple_condition ["and"i and_condition]
+    and_condition: simple_condition ["and"i and_condition]
 
-    _simple_condition: recurrence_condition | year_condition
+    simple_condition: recurrence_condition
+        | year_condition
+        | TRUE
+        | FALSE
 
-    ?recurrence_condition: recur_ref _predicate
+    ?recurrence_condition: recur_ref _EXISTS -> exist_condition
+        | recur_ref [NOT] _IN month -> month_condition
+        | recur_ref _IS [NOT] (weekday | NEVER) -> wd_condition
 
     ?recur_ref: recurrence
 
@@ -79,10 +86,6 @@ rule_grammar: Final = r"""
 
     ?division: LEAP
         | NUMBER _MOD NUMBER
-
-    _predicate: EXISTS
-        | [NOT] _IN month
-        | _IS [NOT] (weekday | NEVER)
 
     ?ordinal: FIRST | SECOND | THIRD | FOURTH | TH
 
@@ -107,12 +110,15 @@ rule_grammar: Final = r"""
     NOVEMBER.9: /nov(emb(er|re))?/i
     DECEMBER.9: /dec(emb(er|re))?/i
 
+    TRUE.9: /true/i
+    FALSE.9: /false/i
+
     FIRST.9: "first"i
     SECOND.9: "second"i
     THIRD.9: "third"i
     FOURTH.9: "fourth"i
-    LAST.9: "last"i
-    EXISTS.9: "exists"i
+    _LAST.9: "last"i
+    _EXISTS.9: "exists"i
     _OF.9: /of/i
     _IF.9: "if"i
     _ELSE.9: "else"i
@@ -163,12 +169,33 @@ class RuleEvaluator(Transformer):
         f_value: datetime.date | None,
     ) -> datetime.date | None:
         """Evaluate an optional conditional expression."""
-        if condition is None or condition:
+        print(repr(condition))
+        print(type(condition))
+        if (condition is None) or condition:
             return t_value
         return f_value
 
+    def weekday_rule(
+        self,
+        rec: datetime.date | None,
+    ) -> datetime.date | None:
+        """Translate a weekday rule."""
+        return rec
+
+    def preposition(self, the_prep: int) -> int:
+        """Return the actual preposition."""
+        return prep
+
     def recurrence(self, rd: datetime.date | None) -> datetime.date | None:
         return rd
+
+    def simple_condition(self, cond: bool) -> bool:
+        """Evaluate condition."""
+        return cond
+
+    def condition(self, cond: bool) -> bool:
+        """Evaluate condition."""
+        return cond
 
     def literal(self, month: Month, day: int) -> datetime.date | None:
         """Convert literal to date."""
@@ -268,6 +295,48 @@ class RuleEvaluator(Transformer):
             delta += preposition * 7 * weeks
         return recurrence + datetime.timedelta(days=delta)
 
+    def lwd_rule(
+        self,
+        week_day: WeekDay,
+        month: Month,
+    ) -> datetime.date | None:
+        """Compute last of a week day of a month."""
+        rel = (
+            datetime.date(self.year + 1, 1, 1)
+            if month == Month.DECEMBER
+            else datetime.date(self.year, month.value + 1, 1)
+        )
+        return self.wd_rule(1, week_day, False, -1, rel)
+
+    def month_condition(
+        self,
+        recur_ref: datetime.date | None,
+        not_token: Token | None,
+        month: Month,
+    ) -> bool:
+        """Check whether a date is in the given month."""
+        if recur_ref is None:
+            return False
+        return (month.value == recur_ref.month and self.year == recur_ref.year) == (
+            not_token is None
+        )
+
+    def exist_condition(self, recurrence: datetime.date | None) -> bool:
+        """Check a date for existence."""
+        return recurrence is not None
+
+    def and_condition(self, cond1: bool, cond2: bool) -> bool:
+        """Evaluate an and-condition."""
+        if cond2 is None:
+            return cond1
+        return cond1 and cond2
+
+    def or_condition(self, cond1: bool, cond2: bool) -> bool:
+        """Evaluate an or-condition."""
+        if cond2 is None:
+            return cond1
+        return cond1 or cond2
+
     def BEFORE(self, token: Token) -> int:  # noqa: N802
         """Translate ``BEFORE`` to -1."""
         return -1
@@ -308,6 +377,14 @@ class RuleEvaluator(Transformer):
                 result *= 10
                 result += ord(dig) - ord('0')
         return result
+
+    def TRUE(self, token: Token) -> bool:  # noqa: N802
+        """Transform boolean literal."""
+        return True
+
+    def FALSE(self, token: Token) -> bool:  # noqa: N802
+        """Transform boolean literal."""
+        return False
 
 
 def rule_parser(

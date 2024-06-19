@@ -67,6 +67,19 @@ from annual.ruleparser import rule_parser
             'oct 2 if oct 1 is sunday else oct 1',
             dt.date(2023, 10, 2),
         ),
+        (2000, 'jan 1 if year is 2 mod 4 else feb 2', dt.date(2000, 2, 2)),
+        (2002, 'jan 1 if year is 2 mod 4 else feb 2', dt.date(2002, 1, 1)),
+        (2000, 'jan 1 if year is 2000 else feb 2', dt.date(2000, 1, 1)),
+        (2000, 'jan 1 if year is not 2000 else feb 2', dt.date(2000, 2, 2)),
+        (2000, 'jan 1 if year is leap else feb 2', dt.date(2000, 1, 1)),
+        (2000, 'jan 1 if year is not leap else feb 2', dt.date(2000, 2, 2)),
+        (2100, 'jan 1 if year is leap else feb 2', dt.date(2100, 2, 2)),
+        (2004, 'jan 1 if year is leap else feb 2', dt.date(2004, 1, 1)),
+        (
+            2004,
+            'oct 3 if year after 1989 else jun 17',
+            dt.date(2004, 10, 3),
+        ),
     ],
 )
 def test_parser(year: int, rule: str, expected: dt.date | None) -> None:

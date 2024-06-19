@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import calendar
 import datetime
 import warnings
 from typing import Final
@@ -79,13 +80,15 @@ rule_grammar: Final = r"""
 
     ?recur_ref: recurrence
 
-    ?year_condition: _YEAR year_predicate
+    year_condition: _YEAR year_predicate
 
-    ?year_predicate: _IS [NOT] division
-        | preposition NUMBER
+    year_predicate: ydiv_cond | ycmp_cond
 
-    ?division: LEAP
-        | NUMBER _MOD NUMBER
+    ydiv_cond: _IS [NOT] division
+    ycmp_cond: preposition NUMBER
+
+    division: LEAP
+        | NUMBER [ _MOD NUMBER] -> ymod_cond
 
     ?ordinal: FIRST | SECOND | THIRD | FOURTH | TH
 
@@ -399,6 +402,34 @@ class RuleEvaluator(Transformer):
     def FALSE(self, token: Token) -> bool:  # noqa: N802
         """Transform boolean literal."""
         return False
+
+    def year_condition(self, year_predicate: bool) -> bool:
+        """Evaluate a year condition."""
+        return year_predicate
+
+    def year_predicate(self, cond: bool) -> bool:
+        """Evaluate year condition."""
+        return cond
+
+    def ydiv_cond(self, not_tok: Token | None, cond: bool) -> bool:
+        """Evaluate division like conditions."""
+        return cond == (not_tok is None)
+
+    def ycmp_cond(self, preposition: int, number: int) -> bool:
+        """Compare year number."""
+        return (self.year - number) * preposition > 0
+
+    def division(self, cond: bool) -> bool:
+        """Evaluate division rule."""
+        return cond
+
+    def LEAP(self, _: Token) -> bool:
+        """Check whether year is a leap year."""
+        return calendar.isleap(self.year)
+
+    def ymod_cond(self, rem: int, divi: int | None) -> bool:
+        """Check year in nodular arithmetic."""
+        return rem == (self.year if not divi else (self.year % divi))
 
 
 def rule_parser(

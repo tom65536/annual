@@ -33,7 +33,7 @@ repos:
       - id: isort
         args: ["-a", "from __future__ import annotations"]
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.2
+    rev: v3.16.0
     hooks:
       - id: pyupgrade
         args: [--py39-plus]
@@ -44,7 +44,7 @@ repos:
         args: [--config=pyproject.toml]
         stages: [manual]
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.6
+    rev: v2.3.0
     hooks:
       - id: codespell
   - repo: https://github.com/pre-commit/pygrep-hooks
@@ -59,7 +59,7 @@ repos:
       - id: rst-directive-colons
       - id: rst-inline-touching-normal
   - repo: https://github.com/hhatto/autopep8
-    rev: v2.1.0
+    rev: v2.3.0
     hooks:
       - id: autopep8
   - repo: https://github.com/tox-dev/tox-ini-fmt

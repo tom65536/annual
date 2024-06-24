@@ -9,6 +9,12 @@ from typing import Final
 
 from lark import Lark, Token, Transformer, v_args
 
+from .datecalc import (
+    days_relative_to,
+    last_wd_of_month,
+    wd_of_month,
+    wd_relative_to,
+)
 from .model import Month, WeekDay
 
 __all__ = ['rule_parser']
@@ -172,8 +178,6 @@ class RuleEvaluator(Transformer):
         f_value: datetime.date | None,
     ) -> datetime.date | None:
         """Evaluate an optional conditional expression."""
-        print(repr(condition))
-        print(type(condition))
         if (condition is None) or condition:
             return t_value
         return f_value
@@ -187,7 +191,7 @@ class RuleEvaluator(Transformer):
 
     def preposition(self, the_prep: int) -> int:
         """Return the actual preposition."""
-        return prep
+        return the_prep
 
     def recurrence(self, rd: datetime.date | None) -> datetime.date | None:
         return rd
@@ -249,7 +253,7 @@ class RuleEvaluator(Transformer):
         if recurrence is None:
             return None
         num_days = number * unit * preposition
-        return recurrence + datetime.timedelta(days=num_days)
+        return days_relative_to(recurrence, num_days)
 
     def owm_rule(
         self,
@@ -258,13 +262,7 @@ class RuleEvaluator(Transformer):
         hook: Month,
     ) -> datetime.date | None:
         """Translate weekday-of-month rule."""
-        first = datetime.date(self.year, hook.value, 1)
-        offs = (week_day.value - first.weekday() + 7) % 7
-        offs += (ordinal - 1) * 7
-        result = first + datetime.timedelta(days=offs)
-        if result.year == self.year and result.month == hook.value:
-            return result
-        return None
+        return wd_of_month(self.year, hook, ordinal, week_day)
 
     def wd_rule(
         self,
@@ -272,31 +270,22 @@ class RuleEvaluator(Transformer):
         week_day: WeekDay,
         neg: Token | None,
         preposition: int,
-        recurrence: datetime.date,
+        recurrence: datetime.date | None,
     ) -> datetime.date | None:
         """Translate weekday-relative-to rule."""
         if recurrence is None:
             return None
-        weeks = ordinal - 1 if ordinal is not None else 0
-        if preposition > 0:
-            if neg:
-                # NOT AFTER
-                delta = (week_day.value - recurrence.weekday() + 6) % 7 - 6
-            else:
-                # AFTER
-                delta = (week_day.value - recurrence.weekday() + 6) % 7 + 1
-        else:
-            if neg:
-                # NOT BEFORE
-                delta = (week_day.value - recurrence.weekday()) % 7
-            else:
-                # BEFORE
-                delta = (week_day.value - recurrence.weekday()) % 7 - 7
-        if neg:
-            delta -= preposition * 7 * weeks
-        else:
-            delta += preposition * 7 * weeks
-        return recurrence + datetime.timedelta(days=delta)
+        include_start: bool = neg is not None
+        direction = -preposition if include_start else preposition
+        return days_relative_to(
+            wd_relative_to(
+                recurrence,
+                week_day,
+                direction,
+                include_start,
+            ),
+            direction * 7 * (ordinal - 1 if ordinal else 0),
+        )
 
     def lwd_rule(
         self,
@@ -304,16 +293,11 @@ class RuleEvaluator(Transformer):
         month: Month,
     ) -> datetime.date | None:
         """Compute last of a week day of a month."""
-        rel = (
-            datetime.date(self.year + 1, 1, 1)
-            if month == Month.DECEMBER
-            else datetime.date(self.year, month.value + 1, 1)
-        )
-        return self.wd_rule(1, week_day, False, -1, rel)
+        return last_wd_of_month(self.year, month, week_day)
 
     def wd_condition(
         self,
-        recur_ref: dt.date | None,
+        recur_ref: datetime.date | None,
         not_tok: Token | None,
         week_day: WeekDay | None,
     ) -> bool:
@@ -334,9 +318,9 @@ class RuleEvaluator(Transformer):
         """Check whether a date is in the given month."""
         if recur_ref is None:
             return False
-        return (month.value == recur_ref.month and self.year == recur_ref.year) == (
-            not_token is None
-        )
+        m_cond = month.value == recur_ref.month
+        y_cond = self.year == recur_ref.year
+        return (m_cond and y_cond) == (not_token is None)
 
     def exist_condition(self, recurrence: datetime.date | None) -> bool:
         """Check a date for existence."""

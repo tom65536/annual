@@ -31,6 +31,11 @@ email = "peregrinus@planet.ms"
 Home = "https://github.com/tom65536/annual"
 Source = "https://github.com/tom65536/annual"
 
+[tool.isort]
+line_length=79
+multi_line_output=3
+profile="black"
+
 [tool.mypy]
 warn_unused_configs = true
 packages = "annual"

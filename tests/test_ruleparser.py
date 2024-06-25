@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import datetime as dt
 
-import pytest  # noqa: I900
+import pytest
 
 from annual.ruleparser import rule_parser
 

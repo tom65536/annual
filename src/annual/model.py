@@ -8,7 +8,23 @@ __all__ = ['Month', 'WeekDay']
 
 
 class Month(Enum):
-    """Enumerate the months of the year."""
+    """Enumerate the months of the year.
+
+    Attributes
+    ----------
+    JANUARY
+    FEBRUARY
+    MARCH
+    APRIL
+    MAY
+    JUNE
+    JULY
+    AUGUST
+    SEPTEMBER
+    OCTOBER
+    NOVEMBER
+    DECEMBER
+    """
 
     JANUARY = 1
     FEBRUARY = 2
@@ -25,7 +41,18 @@ class Month(Enum):
 
 
 class WeekDay(Enum):
-    """Enumerate the days of the week."""
+    """Enumerate the days of the week.
+
+    Attributes
+    ----------
+    MONDAY
+    TUESDAY
+    WEDNESDAY
+    THURSDAY
+    FRIDAY
+    SATURDAY
+    SUNDAY
+    """
 
     MONDAY = 0
     TUESDAY = 1

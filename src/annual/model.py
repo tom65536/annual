@@ -7,24 +7,8 @@ from enum import Enum
 __all__ = ['Month', 'WeekDay']
 
 
-class Month(Enum):
-    """Enumerate the months of the year.
-
-    Attributes
-    ----------
-    JANUARY
-    FEBRUARY
-    MARCH
-    APRIL
-    MAY
-    JUNE
-    JULY
-    AUGUST
-    SEPTEMBER
-    OCTOBER
-    NOVEMBER
-    DECEMBER
-    """
+class Month(Enum):  # noqa: DOC601, DOC603
+    """Enumerate the months of the year."""
 
     JANUARY = 1
     FEBRUARY = 2
@@ -40,19 +24,8 @@ class Month(Enum):
     DECEMBER = 12
 
 
-class WeekDay(Enum):
-    """Enumerate the days of the week.
-
-    Attributes
-    ----------
-    MONDAY
-    TUESDAY
-    WEDNESDAY
-    THURSDAY
-    FRIDAY
-    SATURDAY
-    SUNDAY
-    """
+class WeekDay(Enum):  # noqa: DOC601, DOC603
+    """Enumerate the days of the week."""
 
     MONDAY = 0
     TUESDAY = 1

@@ -10,6 +10,8 @@ Welcome to annual's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   gherkin/gherkin
+
 Indices and tables
 ==================
 

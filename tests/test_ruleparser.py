@@ -3,10 +3,29 @@
 from __future__ import annotations
 
 import datetime as dt
+from functools import partial
 
 import pytest
+import pytest_bdd
 
 from annual.ruleparser import rule_parser
+
+scenario = partial(pytest_bdd.scenario, 'ruleparser/mothers_day.feature')
+
+
+@scenario("Mother's Day in Germany and many other countries")
+def test_feature_mothers_day_germany() -> None:
+    """Test case for a scenario."""
+
+
+@scenario("Mother's Day in France")
+def test_feature_mothers_day_france() -> None:
+    """Test case for a scenario."""
+
+
+@scenario("Mother's Day in Mexico")
+def test_feature_mothers_day_mexico() -> None:
+    """Test case for a scenario."""
 
 
 @pytest.mark.parametrize(

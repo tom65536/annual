@@ -56,7 +56,7 @@ def _(rule: str) -> str:
 @when(parse('the year is {year:d}'), target_fixture='rule_par')
 def _(year: int) -> Lark:
     """Construct a rule parser for the given year."""
-    return rule_parser({}, year)
+    return rule_parser(year, {})
 
 
 def parse_date(text: str) -> datetime.date:

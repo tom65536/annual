@@ -106,7 +106,7 @@ def test_parser(year: int, rule: str, expected: dt.date | None) -> None:
     funcs = {
         'xmas': dt.date(year, 12, 25),
     }
-    rp = rule_parser(funcs, year)
+    rp = rule_parser(year, funcs)
 
     result = rp.parse(rule)
 

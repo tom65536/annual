@@ -46,20 +46,20 @@ datetime.date(2024, 10, 14)
 ```
 
 For a full overview of the syntax supported by the rule parser
-consult the [Syntax Guide](https://annual.readthedocs.io/en/latest/syntax.html).
+consult the [Syntax Guide](https://annual.readthedocs.io/latest/syntax.html).
 
 
 ## Additional Documentation
 
 For more detailed information about DateCalc, please refer to our comprehensive documentation:
 
-- **User Guide**: For in-depth explanations of _annual_'s features and how to use them effectively, visit our [User Guide](https://annual.readthedocs.io/en/latest/user_guide.html).
+- **User Guide**: For in-depth explanations of _annual_'s features and how to use them effectively, visit our [User Guide](https://annual.readthedocs.io/latest/user_guide.html).
 
-- **API Reference**: For detailed information about _annual_'s classes, methods, and functions, check out our [API Reference](https://annual.readthedocs.io/en/latest/autoapi/).
+- **API Reference**: For detailed information about _annual_'s classes, methods, and functions, check out our [API Reference](https://annual.readthedocs.io/latest/autoapi/).
 
-- **Tutorials**: To get started quickly with practical examples, see our [Tutorials](https://annual.readthedocs.io/en/latest/tutorials.html).
+- **Tutorials**: To get started quickly with practical examples, see our [Tutorials](https://annual.readthedocs.io/latest/tutorials.html).
 
-- **FAQ**: For answers to commonly asked questions, visit our [FAQ page](https://annual.readthedocs.io/en/latest/faq.html).
+- **FAQ**: For answers to commonly asked questions, visit our [FAQ page](https://annual.readthedocs.io/latest/faq.html).
 
 - **Contributing**: If you're interested in contributing to _annual_,
 please read our [Contribution Guidelines](CONTRIBUTING.md).

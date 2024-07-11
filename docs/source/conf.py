@@ -31,6 +31,7 @@ exclude_patterns = []
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3.11/', None),
+    'lark': ('https://lark-parser.readthedocs.io/en/stable/', None),
 }
 
 github_username = 'tom65536'

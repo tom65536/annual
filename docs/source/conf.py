@@ -7,7 +7,7 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 # -- Project information ---------------------------------------------------
 
 project = 'annual'
-copyright = '2024, Thomas Reiter'  # noqa: W0622
+copyright = '2024, Thomas Reiter'  # pylint: disable=redefined-builtin
 author = 'Thomas Reiter'
 release = '0.1.0'
 

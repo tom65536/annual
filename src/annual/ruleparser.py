@@ -417,21 +417,41 @@ class RuleEvaluator(Transformer):
 
 
 def rule_parser(
-    funcs: dict[str, datetime.date | None],
     year: int,
+    funcs: dict[str, datetime.date | None] | None = None,
 ) -> Lark:
     """Generate rule parser.
 
-    Arguments:
-    ----------
-    - funcs
-        a dictionary of precomputed dates
-    - year
-        the year for which new dates are computed
+    Arguments
+    ---------
+    year : int
+        The year for which new dates are computed.
+    funcs : dict[str, datetime.date | None] | None, optional
+        A dictionary of precomputed dates.
+
+    Return
+    ------
+    Lark
+        A ``Lark`` parser instance.
+
+    Example
+    -------
+    >>> from annual.ruleparser import rule_parser
+    >>> rule_parser(2024).parse('Sunday after may 1')
+    datetime.date(2024, 5, 5)
+
+    You can use the ``funcs`` argument to supply precomputed dates,
+    which can be referred to in the given expression.
+
+    >>> from annual.ruleparser import rule_parser
+    >>> year = 2024
+    >>> funcs = {'easter': datetime.date(year, 3, 31)}
+    >>> rule_parser(year, funcs).parse('49 days after easter')
+    datetime.date(2024, 5, 19)
     """
     return Lark(
         rule_grammar,
         start='rule',
         parser='lalr',
-        transformer=RuleEvaluator(funcs, year),
+        transformer=RuleEvaluator(funcs if funcs else {}, year),
     )

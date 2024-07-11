@@ -13,6 +13,7 @@ Welcome to annual's documentation!
    introduction
    user_guide
    tutorials
+   syntax
    faq
 
    gherkin/gherkin
@@ -23,3 +24,8 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+.. sidebar-links::
+   :caption: Project Links
+   :github:
+   :pypi: annual

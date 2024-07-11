@@ -15,12 +15,26 @@ release = '0.1.0'
 
 extensions = [
     'autoapi.extension',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
+    'sphinx.ext.viewcode',
     'sphinx_rtd_theme',
+    'sphinx_tabs.tabs',
+    'sphinx-prompt',
+    'sphinx_toolbox',
+    'sphinx_toolbox.installation',
+    'sphinx_toolbox.sidebar_links',
 ]
 
 templates_path = ['_templates']
 exclude_patterns = []
+
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3.11/", None),
+}
+
+github_username = 'tom65536'
+github_repository = 'annual'
 
 # -- Configure autoapi -----------------------------------------------------
 autoapi_dirs = ['../../src']

@@ -30,7 +30,7 @@ templates_path = ['_templates']
 exclude_patterns = []
 
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3.11/", None),
+    'python': ('https://docs.python.org/3.11/', None),
 }
 
 github_username = 'tom65536'

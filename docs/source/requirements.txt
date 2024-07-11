@@ -1,0 +1,6 @@
+
+sphinx~=7.3
+sphinx-autoapi~=3.1
+sphinx-gherkindoc~=3.6
+sphinx-toolbox~=3.7
+sphinx_rtd_theme~=2.0

@@ -7,7 +7,7 @@ import datetime
 
 import pytest
 
-from annual.easter import easter, easter_julian, easter_orthodox
+from annual.functions import easter, easter_julian, easter_orthodox
 
 
 @pytest.mark.parametrize(

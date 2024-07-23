@@ -10,9 +10,12 @@ easter algorithms.
 
 import datetime
 
+from ..decorators import date_function
+
 __all__ = ['easter', 'easter_orthodox', 'easter_julian']
 
 
+@date_function()
 def easter(year: int) -> datetime.date | None:
     """Calculate the easter date for Western churches.
 
@@ -39,6 +42,7 @@ def easter(year: int) -> datetime.date | None:
     return easter_day_to_date(year, day)
 
 
+@date_function()
 def easter_orthodox(year: int) -> datetime.date | None:
     """Calculate the easter date for Eastern churches.
 
@@ -66,6 +70,7 @@ def easter_orthodox(year: int) -> datetime.date | None:
     return easter_day_to_date(year, day)
 
 
+@date_function()
 def easter_julian(year: int) -> datetime.date | None:
     """Calculate the Julian easter date.
 

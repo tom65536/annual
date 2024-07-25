@@ -16,12 +16,12 @@ class FunctionRegistry:
 
     Parameters
     ----------
-    auto_plugins : bool, default = True
+    auto_plugins : bool
         determines whether plugins should be loaded upon initialization
+        (optional, default = ``True``)
     """
 
     def __init__(self, auto_plugins: bool = True) -> None:
-        """Initialize an instance of this class."""
         self._date_functions: dict[str, DateFunction] = {}
         if auto_plugins:
             self.add_from_plugins()
@@ -60,9 +60,8 @@ class FunctionRegistry:
         for name in dir(module):
             obj = getattr(module, name)
             if hasattr(obj, '__decorator__'):
-                decorator_name = getattr(obj, '__decorator__')
-                match decorator_name:
-                    case date_function:
+                match obj.__decorator__:
+                    case 'date_function':
                         self.add_date_function(cast(DateFunction, obj))
 
     def add_date_function(self, date_function: DateFunction) -> None:

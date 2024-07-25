@@ -34,15 +34,15 @@ rule_grammar: Final = r"""
 
     weekday_rule: owm_rule | wd_rule | lwd_rule
 
-    wd_rule: [ordinal] weekday [NOT] preposition recurrence
+    wd_rule: _THE? [ordinal] weekday [NOT] preposition recurrence
 
-    owm_rule: ordinal weekday month_hook
+    owm_rule: _THE? ordinal weekday month_hook
 
-    lwd_rule: _LAST weekday month_hook
+    lwd_rule: _THE? _LAST weekday month_hook
 
     ?month_hook: _OF month
 
-    ?preposition: BEFORE | AFTER
+    preposition: BEFORE | AFTER
 
     ?unit: DAYS | WEEKS
 
@@ -83,6 +83,8 @@ rule_grammar: Final = r"""
     ?recurrence_condition: recur_ref _EXISTS -> exist_condition
         | recur_ref [NOT] _IN month -> month_condition
         | recur_ref _IS [NOT] (weekday | NEVER) -> wd_condition
+        | recur_ref _IS [NOT] _SAME _AS recur_ref -> day_eq_condition
+        | recur_ref _IS [NOT] preposition recur_ref -> day_prep_condition
 
     ?recur_ref: recurrence
 
@@ -91,7 +93,7 @@ rule_grammar: Final = r"""
     year_predicate: ydiv_cond | ycmp_cond
 
     ydiv_cond: _IS [NOT] division
-    ycmp_cond: preposition NUMBER
+    ycmp_cond: _IS? [NOT] preposition NUMBER
 
     division: LEAP
         | NUMBER [ _MOD NUMBER] -> ymod_cond
@@ -136,6 +138,9 @@ rule_grammar: Final = r"""
     _IN.9: "in"i
     LEAP.9: "leap"i
     _MOD.9: "mod"i
+    _SAME.9: "same"i
+    _AS.9: "as"i
+    _THE.9: "the"i
     BEFORE.9: "before"i
     AFTER.9: "after"i
     _YEAR.9: "year"i
@@ -304,15 +309,39 @@ class RuleEvaluator(Transformer):
         """Evaluate weekday condition."""
         if week_day is None:
             # recur_ref IS [NOT] NEVER
-            return (recur_ref is None) == (not_tok is None)
+            return _negate(not_tok, recur_ref is None)
         if recur_ref is None:
             return False
-        return (recur_ref.weekday() == week_day.value) == (not_tok is None)
+        return _negate(not_tok, recur_ref.weekday() == week_day.value)
+
+    def day_eq_condition(
+        self,
+        recur_ref: datetime.date | None,
+        not_tok: Token | None,
+        recur_ref_2: datetime.date | None,
+    ) -> bool:
+        """Evaluate day equality condition."""
+        if recur_ref is None or recur_ref_2 is None:
+            return False
+        return _negate(not_tok, recur_ref == recur_ref_2)
+
+    def day_prep_condition(
+        self,
+        recur_ref: datetime.date | None,
+        not_tok: Token | None,
+        preposition: int,
+        recur_ref_2: datetime.date | None,
+    ) -> bool:
+        """Evaluate day preposition condition."""
+        if recur_ref is None or recur_ref_2 is None:
+            return False
+        diff = preposition * (recur_ref - recur_ref_2).days
+        return _negate(not_tok, diff > 0)
 
     def month_condition(
         self,
         recur_ref: datetime.date | None,
-        not_token: Token | None,
+        not_tok: Token | None,
         month: Month,
     ) -> bool:
         """Check whether a date is in the given month."""
@@ -320,7 +349,7 @@ class RuleEvaluator(Transformer):
             return False
         m_cond = month.value == recur_ref.month
         y_cond = self.year == recur_ref.year
-        return (m_cond and y_cond) == (not_token is None)
+        return _negate(not_tok, m_cond and y_cond)
 
     def exist_condition(self, recurrence: datetime.date | None) -> bool:
         """Check a date for existence."""
@@ -397,11 +426,16 @@ class RuleEvaluator(Transformer):
 
     def ydiv_cond(self, not_tok: Token | None, cond: bool) -> bool:
         """Evaluate division like conditions."""
-        return cond == (not_tok is None)
+        return _negate(not_tok, cond)
 
-    def ycmp_cond(self, preposition: int, number: int) -> bool:
+    def ycmp_cond(
+        self,
+        not_tok: Token | None,
+        preposition: int,
+        number: int,
+    ) -> bool:
         """Compare year number."""
-        return (self.year - number) * preposition > 0
+        return _negate(not_tok, (self.year - number) * preposition > 0)
 
     def division(self, cond: bool) -> bool:
         """Evaluate division rule."""
@@ -414,6 +448,11 @@ class RuleEvaluator(Transformer):
     def ymod_cond(self, rem: int, divi: int | None) -> bool:
         """Check year in nodular arithmetic."""
         return rem == (self.year if not divi else (self.year % divi))
+
+
+def _negate(not_tok: Token | None, cond: bool) -> bool:
+    """Negate rhe condition if the NOT token is present."""
+    return cond == (not_tok is None)
 
 
 def rule_parser(

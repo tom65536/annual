@@ -2,21 +2,20 @@
 
 import datetime
 
-import pytest
-
 from annual.decorators import date_function
 from annual.registry import FunctionRegistry
 
+__all__ = []
+
 
 @date_function()
-def never(year: int) -> datetime.date | None:
-    """Dummy date function."""
-    return None
+def never(year: int) -> None:
+    """Compute always never."""
 
 
 @date_function('new-years-day')
-def new_year(year: int) -> datetime.date | None:
-    """Needless function."""
+def new_year_date(year: int) -> datetime.date | None:
+    """Compute new' year's day, just for demonstration."""
     return datetime.date(year, 1, 1)
 
 
@@ -34,7 +33,7 @@ def test_add_date_function() -> None:
     """Create a blank registry and add functions one by one."""
     reg = FunctionRegistry(auto_plugins=False)
     reg.add_date_function(never)
-    reg.add_date_function(new_year)
+    reg.add_date_function(new_year_date)
 
     result = reg.evaluate(2000)
 

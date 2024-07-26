@@ -55,7 +55,7 @@ def date_function(
 
         if name:
             wrapper.__name__ = name
-        mark_decorator(wrapper, date_func.__name__)
+        mark_decorator(wrapper, date_function.__name__)
         return wrapper
 
     return decorator_func

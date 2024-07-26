@@ -18,7 +18,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v3.2.0
+    rev: v3.3.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
@@ -59,7 +59,7 @@ repos:
       - id: rst-directive-colons
       - id: rst-inline-touching-normal
   - repo: https://github.com/hhatto/autopep8
-    rev: v2.3.0
+    rev: v2.3.1
     hooks:
       - id: autopep8
   - repo: https://github.com/tox-dev/tox-ini-fmt
@@ -80,6 +80,6 @@ repos:
     hooks:
       - id: autoflake
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: "v3.27.0"
+    rev: "v3.28.0"
     hooks:
       - id: commitizen

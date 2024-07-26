@@ -30,6 +30,10 @@ email = "peregrinus@planet.ms"
 Home = "https://github.com/tom65536/annual"
 Source = "https://github.com/tom65536/annual"
 
+[project.entry-points.annual]
+annual = 'annual.functions'
+
+
 [tool.isort]
 line_length=79
 multi_line_output=3
@@ -47,7 +51,7 @@ paths = ["src/annual", "tests"]
 
 [tool.black]
 skip-string-normalization = true
-max-line-length=79
+line-length=79
 
 [tool.semantic_release]
 version_variables = [

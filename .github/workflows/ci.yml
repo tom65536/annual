@@ -45,7 +45,7 @@ jobs:
         if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: .coverage
+          coverage-reports: coverage.xml
 
   Release:
     needs:

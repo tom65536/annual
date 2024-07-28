@@ -67,6 +67,7 @@ jobs:
         fetch-depth: 0
 
     - name: Python Semantic Release
+      id: release
       uses: python-semantic-release/python-semantic-release@3ba53469e72452e7597dd5c61851e6fbf294420b  # v9.8.3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}

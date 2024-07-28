@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [v0.1.2] - 2024-07-28
+
+### Chore
+
+* chore: update precommit hooks, exclude `CHANGELOG.md` from spellchecking. ([`491a0c1`](https://github.com/tom65536/annual/commit/491a0c1a5eb025a868ad404dc24a466c52626204))
+
+### Ci
+
+* ci: pin version of codacy uploader. ([`4cd9c23`](https://github.com/tom65536/annual/commit/4cd9c23c0d07748d64831aa93bee8b5fe3862e95))
+
+* ci: create xml coverage report ([`43e06cf`](https://github.com/tom65536/annual/commit/43e06cfe362c2060d70f389d877d3e1b19aa2486))
+
+* ci: add token to codacy action ([`64457bb`](https://github.com/tom65536/annual/commit/64457bb7462be20545c43ec96eb45268736d3c96))
+
+### Fix
+
+* fix: set build command for semantic release ([`6098ddc`](https://github.com/tom65536/annual/commit/6098ddc9f2ccfa7a7bcf5752f846109981cd1360))
+
+* fix: coverage path configuration ([`921441c`](https://github.com/tom65536/annual/commit/921441cbd7319b725fcc78b316ac2d98b17c125f))
+
+### Unknown
+
+* Merge pull request #21 from tom65536/11-add-code-coverage
+
+fix: set build command for semantic release ([`4d275c8`](https://github.com/tom65536/annual/commit/4d275c8f66bd816eb6fb6d825e4ccb0d4a598fa9))
+
+* doc: add coverage badge ([`3f26ab7`](https://github.com/tom65536/annual/commit/3f26ab73eb35dc239dca9067cdbfed183814f714))
 ## [v0.1.1] - 2024-07-28
 
 ### Ci

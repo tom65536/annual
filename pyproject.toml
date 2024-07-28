@@ -33,6 +33,11 @@ Source = "https://github.com/tom65536/annual"
 [project.entry-points.annual]
 annual = 'annual.functions'
 
+[project.optional-dependencies]
+build = [
+    "build ~= 1.2"
+]
+
 
 [tool.isort]
 line_length=79
@@ -58,6 +63,10 @@ version_variables = [
     "src/annual/__init__.py:__version__",
     "docs/source/conf.py:release"
 ]
+build_command = """
+    python -m pip install -e .[build]
+    python -m build .
+"""
 
 [tool.pydoclint]
 style = 'numpy'

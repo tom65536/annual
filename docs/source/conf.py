@@ -9,7 +9,7 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 project = 'annual'
 copyright = '2024, Thomas Reiter'  # pylint: disable=redefined-builtin
 author = 'Thomas Reiter'
-release = '0.1.2'
+release = '0.1.3'
 
 # -- General configuration -------------------------------------------------
 

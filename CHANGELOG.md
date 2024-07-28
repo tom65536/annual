@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [v0.1.3] - 2024-07-28
+
+### Fix
+
+* fix(ci): add missing id &#39;release&#39; which prevented publications ([`71609c9`](https://github.com/tom65536/annual/commit/71609c958afb908c0cc41176630a682c55097990))
+
+### Unknown
+
+* Merge pull request #22 from tom65536/11-add-code-coverage
+
+fix(ci): add missing id &#39;release&#39; which prevented publications ([`7817834`](https://github.com/tom65536/annual/commit/7817834c75673c2bab5440ca8f46317411476bb8))
 ## [v0.1.2] - 2024-07-28
 
 ### Chore

@@ -4,6 +4,7 @@
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/8996/badge)](https://www.bestpractices.dev/projects/8996)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/075ffea9b1b8406d95b090e3a56a3313)](https://app.codacy.com/gh/tom65536/annual/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 ![OSS Lifecycle](https://img.shields.io/osslifecycle/tom65536/annual)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/075ffea9b1b8406d95b090e3a56a3313)](https://app.codacy.com/gh/tom65536/annual/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 

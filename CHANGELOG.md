@@ -6,6 +6,82 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [v0.1.1] - 2024-07-28
+
+### Ci
+
+* ci: pin version of codacy uploaer. ([`d151a7c`](https://github.com/tom65536/annual/commit/d151a7c4a31340e80e7f48b411fbf92a7f809297))
+
+* ci: create xml coverage report ([`458394e`](https://github.com/tom65536/annual/commit/458394e4f9b4a5ebded1128586d8395b8a13eeb0))
+
+* ci: add token tocodacy action ([`f1531e9`](https://github.com/tom65536/annual/commit/f1531e964fbc06400876b860812405ffc015e025))
+
+* ci: add coverity upload ([`4bcd7d3`](https://github.com/tom65536/annual/commit/4bcd7d36d0fd6b665fd126625a84c7535949006f))
+
+* ci: Add deployment to pypi to workflow. (#8) ([`0e2007a`](https://github.com/tom65536/annual/commit/0e2007a3fbfa35c613031fa6aa6d7e676d6327ac))
+
+### Documentation
+
+* docs: fix requirements for readthedocs (#17)
+
+Closes #16 ([`f901716`](https://github.com/tom65536/annual/commit/f9017168fe9c1e5640d955c4ff44aca3f366c17b))
+
+### Fix
+
+* fix: coverage path configuration ([`a3983b3`](https://github.com/tom65536/annual/commit/a3983b3c908d9ecbaceef33cbfa83975bf6a85b1))
+
+### Unknown
+
+* Merge pull request #20 from tom65536/11-add-code-coverage
+
+fix: coverage path configuration ([`4f9d508`](https://github.com/tom65536/annual/commit/4f9d5080fce1c020e1a2236f4985bff3bb0e479b))
+
+* Merge pull request #19 from tom65536/11-add-code-coverage
+
+feat: add coverity upload ([`84e1ede`](https://github.com/tom65536/annual/commit/84e1ede4051ced2e1f45c4a849b8a55029175a00))
+
+* doc: add coverage badge ([`15be575`](https://github.com/tom65536/annual/commit/15be575db57daf20da582607b219d4d3c8eba7c6))
+
+* 12 add easter date (#18)
+
+feat: add easter algorithms
+
+* add `date_function` decorator and registry.
+* add easter date
+
+Issue #12 ([`88d1878`](https://github.com/tom65536/annual/commit/88d1878bad9b649d58e8a6dd1c244aaa867f7102))
+
+* 9 improve documentation (#10)
+
+* doc: add API docs with sphinx and autoapi.
+
+* feat: add BDD tests.
+
+* docs: add gherkin files to documentation.
+
+* test: add doctests (modules)
+
+* fix: fix mypy and flake warnigs.
+
+* doc: add basic documentation files.
+
+* docs: improve Introduction
+
+* fix: correct style in docs/source/conf.py
+
+* fix: fix format in issue template
+
+* ci: pin versions of actions
+
+* feat: add readthedocs.yaml
+
+* ci: quality issues
+
+* docs: updatecuser&#39;s giude
+
+* fix: remove unnecessary flake8 exceptions ([`b168c4d`](https://github.com/tom65536/annual/commit/b168c4dba56b6b3dcca554602e8c128ffe237e5b))
+
+* Update issue templates ([`ae20ea1`](https://github.com/tom65536/annual/commit/ae20ea140e21d6dd9e2380df926f3fc7a31f5ded))
 ## [v0.1.0] - 2024-06-26
 
 ### Chore

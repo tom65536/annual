@@ -1,4 +1,4 @@
-"""comment goes here."""
+"""Date calculations with human-readable expressions."""
 
 from __future__ import annotations
 

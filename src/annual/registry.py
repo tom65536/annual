@@ -6,7 +6,7 @@ from collections.abc import Sequence
 from importlib.metadata import entry_points
 from typing import cast
 
-from .decorators import DateFunction
+from .decorators import DateFunction, DateIterator
 
 __all__ = ['FunctionRegistry']
 
@@ -23,6 +23,7 @@ class FunctionRegistry:
 
     def __init__(self, auto_plugins: bool = True) -> None:
         self._date_functions: dict[str, DateFunction] = {}
+        self._date_iterators: dict[str, DateIterator] = {}
         if auto_plugins:
             self.add_from_plugins()
 
@@ -63,6 +64,8 @@ class FunctionRegistry:
                 match obj.__decorator__:
                     case 'date_function':
                         self.add_date_function(cast(DateFunction, obj))
+                    case 'date_iterator':
+                        self.add_date_iterator(cast(DateIterator, obj))
 
     def add_date_function(self, date_function: DateFunction) -> None:
         """Add the given date function.
@@ -73,6 +76,16 @@ class FunctionRegistry:
             the date function to be added
         """
         self._date_functions[date_function.__name__] = date_function
+
+    def add_date_iterator(self, date_iterator: DateIterator) -> None:
+        """Add the given date iterator.
+
+        Parameters
+        ----------
+        date_iterator: DateIterator
+            the date iterator to be added
+        """
+        self._date_iterators[date_iterator.__name__] = date_iterator
 
     def evaluate(self, year: int) -> dict[str, datetime.date | None]:
         """Evaluate all registered functions for the given year.
@@ -90,4 +103,7 @@ class FunctionRegistry:
         result: dict[str, datetime.date | None] = {}
         for name, date_function in self._date_functions.items():
             result[name] = date_function(year)
+        for date_iterator in self._date_iterators.values():
+            for name, date in date_iterator(year):
+                result[name] = date
         return result

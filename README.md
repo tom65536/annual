@@ -1,12 +1,14 @@
 # annual
 [![PyPI - Version](https://img.shields.io/pypi/v/annual?logo=pypi)](https://pypi.org/project/nnual)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/tom65536/annual/ci.yml?logo=github)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/8996/badge)](https://www.bestpractices.dev/projects/8996)
+[![Documentation Status](https://readthedocs.org/projects/annual/badge/?version=latest)](https://annual.readthedocs.io/latest/?badge=latest)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/075ffea9b1b8406d95b090e3a56a3313)](https://app.codacy.com/gh/tom65536/annual/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/075ffea9b1b8406d95b090e3a56a3313)](https://app.codacy.com/gh/tom65536/annual/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
-[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/075ffea9b1b8406d95b090e3a56a3313)](https://app.codacy.com/gh/tom65536/annual/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 ![OSS Lifecycle](https://img.shields.io/osslifecycle/tom65536/annual)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/075ffea9b1b8406d95b090e3a56a3313)](https://app.codacy.com/gh/tom65536/annual/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/8996/badge)](https://www.bestpractices.dev/projects/8996)
+
 
 ## Synopsis
 The Python package _annual_ provides date calculations
@@ -68,7 +70,7 @@ please read our [Contribution Guidelines](CONTRIBUTING.md).
 Our documentation is hosted on Read the Docs and is kept up-to-date
 with each release. You can find the full documentation at:
 
-[https://annual.readthedocs.io](https://annuam.readthedocs.io)
+[https://annual.readthedocs.io](https://annual.readthedocs.io)
 
 If you can't find the information you're looking for, please [open an issue](https://github.com/tom6t536/annual/issues) on our GitHub repository. We're always looking to improve our documentation and appreciate your feedback!
 

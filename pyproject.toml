@@ -29,6 +29,10 @@ email = "peregrinus@planet.ms"
 [project.urls]
 Home = "https://github.com/tom65536/annual"
 Source = "https://github.com/tom65536/annual"
+Documentation = "https://annual.readthedocs.io/latest/"
+Pypi = "https://pypi.org/project/annual/"
+Issues = "https://github.com/tom65536/annual/issues"
+Changelog = "https://github.com/tom65536/annual/blob/main/CHANGELOG.md"
 
 [project.entry-points.annual]
 annual = 'annual.functions'

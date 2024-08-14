@@ -29,7 +29,7 @@ DateIterator: TypeAlias = Callable[
 def date_function(
     name: str | None = None,
 ) -> Callable[[DateFunction], DateFunction]:
-    """Mark a date function to be made available in the parser.
+    """Mark a date function to be made available in the registry.
 
     The function name is used in the registry if no name is
     passed explicitly.
@@ -42,20 +42,45 @@ def date_function(
     Return
     ------
     Callable[[DateFunction], DateFunction]
-        the actual decortor
+        the actual decorator
     """
 
     def decorator_func(date_func: DateFunction) -> DateFunction:
         """Add the wrapper."""
 
         @wraps(date_func)
-        def wrapper(year: int) -> datetime.date | None:
+        def wrapper(year: int) -> MaybeDate:
             """Wrap the function.."""
             return date_func(year)
 
         if name:
             wrapper.__name__ = name
         mark_decorator(wrapper, date_function.__name__)
+        return wrapper
+
+    return decorator_func
+
+
+def date_iterator() -> Callable[[DateIterator], DateIterator]:
+    """Mark a date iterator to be made available in the registry.
+
+    The function name is used in the registry.
+
+    Return
+    ------
+    Callable[[DateIterator], DateIterator]
+        the actual decorator
+    """
+
+    def decorator_func(date_func: DateIterator) -> DateIterator:
+        """Add the wrapper."""
+
+        @wraps(date_func)
+        def wrapper(year: int) -> Iterator[tuple[str, MaybeDate]]:
+            """Wrap the function.."""
+            return date_func(year)
+
+        mark_decorator(wrapper, date_iterator.__name__)
         return wrapper
 
     return decorator_func

@@ -14,6 +14,7 @@ Welcome to annual's documentation!
    user_guide
    tutorials
    syntax
+   extending
    faq
 
    gherkin/gherkin

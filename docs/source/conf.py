@@ -15,6 +15,8 @@ release = '0.1.3'
 
 extensions = [
     'autoapi.extension',
+    'sphinx_copybutton',
+    'sphinx_tabs.tabs',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
@@ -22,6 +24,7 @@ extensions = [
     'sphinx_tabs.tabs',
     'sphinx-prompt',
     'sphinx_toolbox',
+    'sphinx_toolbox.decorators',
     'sphinx_toolbox.installation',
     'sphinx_toolbox.sidebar_links',
 ]
